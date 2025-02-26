@@ -6,60 +6,57 @@ public class ComplexTask {
     /**
      * Отварить мясо.
      */
-    public void boilMeat() {
+    public String boilMeat() {
         sleep(10000);
-        System.out.println("Мясо сварено");
+        return "Мясо сварено";
     }
 
     /**
      * Сделать зажарку.
      */
-    public void makeFry() {
-        chopOnion();
-        chopCarrots();
+    public String makeFry() {
         sleep(2000);
-        System.out.println("Зажарка готова");
+        return chopOnion() + "\n" + chopCarrots() + "\n" + "Зажарка готова";
     }
 
     /**
      * Нарезать капусту.
      */
-    public void chopCabbage() {
+    public String chopCabbage() {
         sleep(3000);
-        System.out.println("Капуста нарезана");
+        return "Капуста нарезана";
     }
 
     /**
      * Нарезать картошку.
      */
-    public void chopPotatoes() {
-        peelPotatoes();
+    public String chopPotatoes() {
         sleep(2000);
-        System.out.println("Картошка нарезана");
+        return peelPotatoes() + "\n" + "Картошка нарезана";
     }
 
     /**
      * Нарезать лук.
      */
-    public void chopOnion() {
+    public String chopOnion() {
         sleep(2000);
-        System.out.println("Лук нарезан");
+        return "Лук нарезан";
     }
 
     /**
      * Нарезать морковь.
      */
-    public void chopCarrots() {
+    public String chopCarrots() {
         sleep(2000);
-        System.out.println("Морковь нарезана");
+        return "Морковь нарезана";
     }
 
     /**
      * Почистить картошку.
      */
-    public void peelPotatoes() {
+    public String peelPotatoes() {
         sleep(5000);
-        System.out.println("Картошка почищена");
+        return "Картошка почищена";
     }
 
     private void sleep(int millis) {

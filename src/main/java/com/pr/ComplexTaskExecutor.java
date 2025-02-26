@@ -1,6 +1,9 @@
 package com.pr;
 
+import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,35 +13,33 @@ public class ComplexTaskExecutor {
     private final ExecutorService executorService;
     private final CyclicBarrier barrier;
     private final ComplexTask task;
+    private final List<String> results = new CopyOnWriteArrayList<>();
 
     public ComplexTaskExecutor() {
         this.executorService = Executors.newFixedThreadPool(4);
         this.task = new ComplexTask();
-        this.barrier = new CyclicBarrier(4, () -> System.out.println("Все этапы завершены! Щи готовы!"));
+        barrier = new CyclicBarrier(4, this::aggregateResults);
     }
 
     public void executeTasks() {
-        executorService.submit(() -> {
-            task.boilMeat();
-            awaitBarrier();
-        });
-
-        executorService.submit(() -> {
-            task.makeFry();
-            awaitBarrier();
-        });
-
-        executorService.submit(() -> {
-            task.chopCabbage();
-            awaitBarrier();
-        });
-
-        executorService.submit(() -> {
-            task.chopPotatoes();
-            awaitBarrier();
-        });
+        submitTask(task::boilMeat);
+        submitTask(task::makeFry);
+        submitTask(task::chopCabbage);
+        submitTask(task::chopPotatoes);
+        submitTask(task::peelPotatoes);
 
         executorService.shutdown();
+    }
+
+    private void submitTask(Callable<String> callable) {
+        executorService.submit(() -> {
+            try {
+                results.add(callable.call());
+                awaitBarrier();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void awaitBarrier() {
@@ -47,5 +48,10 @@ public class ComplexTaskExecutor {
         } catch (InterruptedException | BrokenBarrierException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    private void aggregateResults() {
+        String finalResult = String.join("\n", results);
+        System.out.println(finalResult + "\nВсе этапы завершены! Щи готовы!");
     }
 }
